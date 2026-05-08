@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Запись на услуги</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: Arial, sans-serif; background: #f0f0f0; color: #333; }
+
+    header {
+      background: #2563EB;
+      color: white;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    header h1 { font-size: 22px; }
+    nav a {
+      color: white;
+      text-decoration: none;
+      margin-left: 20px;
+      font-size: 15px;
+    }
+    nav a:hover { text-decoration: underline; }
+
+    main { max-width: 900px; margin: 30px auto; padding: 0 20px; }
+
+    .page { display: none; }
+    .page.active { display: block; }
+
+    .card {
+      background: white;
+      border-radius: 8px;
+      padding: 25px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .card h2 { margin-bottom: 15px; color: #2563EB; }
+
+    button, .btn {
+      background: #2563EB;
+      color: white;
+      border: none;
+      padding: 10px 22px;
+      border-radius: 6px;
+      font-size: 14px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+    }
+    button:hover, .btn:hover { background: #1D4ED8; }
+    button.outline {
+      background: white;
+      color: #2563EB;
+      border: 2px solid #2563EB;
+    }
+    button.outline:hover { background: #EEF2FF; }
+
+    .specialists { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px; }
+    .spec-card {
+      background: white;
+      border-radius: 8px;
+      padding: 18px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      border-left: 4px solid #2563EB;
+    }
+    .spec-card h3 { margin-bottom: 5px; }
+    .spec-card p { font-size: 13px; color: #666; margin-bottom: 3px; }
+    .spec-card .price { font-weight: bold; color: #2563EB; margin: 10px 0; }
+
+    .filters { margin-bottom: 20px; display: flex; gap: 10px; flex-wrap: wrap; }
+    .filter-btn {
+      background: white;
+      color: #333;
+      border: 1.5px solid #ccc;
+      padding: 7px 16px;
+      border-radius: 20px;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .filter-btn.active { background: #2563EB; color: white; border-color: #2563EB; }
+
+    .form-group { margin-bottom: 15px; }
+    .form-group label { display: block; font-size: 14px; font-weight: bold; margin-bottom: 5px; }
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 10px;
+      border: 1.5px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    .form-group input:focus, .form-group select:focus {
+      outline: none;
+      border-color: #2563EB;
+    }
+    .form-group input.error { border-color: red; }
+    .error-msg { color: red; font-size: 12px; margin-top: 4px; display: none; }
+    .error-msg.show { display: block; }
+
+    .tabs { display: flex; border-bottom: 2px solid #ddd; margin-bottom: 20px; }
+    .tab {
+      padding: 10px 20px;
+      background: none;
+      color: #666;
+      border: none;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -2px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .tab.active { color: #2563EB; border-color: #2563EB; font-weight: bold; }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    .hero {
+      background: linear-gradient(135deg, #2563EB, #7C3AED);
+      color: white;
+      padding: 50px 30px;
+      border-radius: 10px;
+      margin-bottom: 25px;
+      text-align: center;
+    }
+    .hero h2 { font-size: 28px; margin-bottom: 10px; }
+    .hero p { font-size: 16px; margin-bottom: 20px; opacity: 0.9; }
+
+    .success-box {
+      background: #D1FAE5;
+      border: 1.5px solid #10B981;
+      color: #065F46;
+      padding: 15px 20px;
+      border-radius: 8px;
+      margin-top: 15px;
+      display: none;
+      font-size: 14px;
+    }
+
+    @media (max-width: 600px) {
+      header { flex-direction: column; gap: 10px; text-align: center; }
+      nav a { margin: 0 8px; }
+      .hero h2 { font-size: 22px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>📅 Запись на услуги</h1>
+  <nav>
+    <a href="#" onclick="showPage('home')">Главная</a>
+    <a href="#" onclick="showPage('services')">Специалисты</a>
+    <a href="#" onclick="showPage('booking')">Записаться</a>
+    <a href="#" onclick="showPage('login')">Войти</a>
+  </nav>
+</header>
+
+<main>
+
+  <div class="page active" id="page-home">
+    <div class="hero">
+      <h2>Запись к специалисту онлайн</h2>
+      <p>Врачи и медицинские специалисты — выберите и запишитесь без звонков</p>
+      <button onclick="showPage('services')">Выбрать специалиста</button>
+    </div>
+    <div class="card">
+      <h2>Как это работает</h2>
+      <p style="margin-bottom:12px">Всего 3 шага:</p>
+      <p>1️⃣ <strong>Выберите специалиста</strong> — найдите нужного врача</p>
+      <p style="margin:8px 0">2️⃣ <strong>Выберите время</strong> — укажите удобную дату и час</p>
+      <p>3️⃣ <strong>Готово!</strong> — подтверждение придёт на ваш email</p>
+      <br>
+      <button onclick="showPage('booking')" style="margin-top:10px">Записаться сейчас</button>
+    </div>
+  </div>
+
+  <div class="page" id="page-services">
+    <div class="card">
+      <h2>Врачи и медицинские специалисты</h2>
+      <div class="filters">
+        <button class="filter-btn active" onclick="filterCards(this, 'all')">Все</button>
+        <button class="filter-btn" onclick="filterCards(this, 'therapist')">👩‍⚕️ Терапевты</button>
+        <button class="filter-btn" onclick="filterCards(this, 'cardiologist')">❤️ Кардиологи</button>
+        <button class="filter-btn" onclick="filterCards(this, 'dentist')">🦷 Стоматологи</button>
+        <button class="filter-btn" onclick="filterCards(this, 'neurologist')">🧠 Неврологи</button>
+      </div>
+      <div class="specialists" id="specList">
+        <div class="spec-card" data-cat="therapist">
+          <h3>👩‍⚕️ Алина Смирнова</h3>
+          <p>Терапевт</p>
+          <p>⭐ 4.9 · 124 отзыва</p>
+          <p class="price">2 500 ₽ / 30 мин</p>
+          <button onclick="showPage('booking')">Записаться</button>
+        </div>
+        <div class="spec-card" data-cat="cardiologist">
+          <h3>👨‍⚕️ Дмитрий Козлов</h3>
+          <p>Кардиолог</p>
+          <p>⭐ 4.8 · 98 отзывов</p>
+          <p class="price">3 500 ₽ / 45 мин</p>
+          <button onclick="showPage('booking')">Записаться</button>
+        </div>
+        <div class="spec-card" data-cat="dentist">
+          <h3>🦷 Елена Михайлова</h3>
+          <p>Стоматолог-терапевт</p>
+          <p>⭐ 4.9 · 156 отзывов</p>
+          <p class="price">2 800 ₽ / 60 мин</p>
+          <button onclick="showPage('booking')">Записаться</button>
+        </div>
+        <div class="spec-card" data-cat="neurologist">
+          <h3>🧠 Игорь Ветров</h3>
+          <p>Невролог</p>
+          <p>⭐ 4.7 · 87 отзывов</p>
+          <p class="price">3 000 ₽ / 45 мин</p>
+          <button onclick="showPage('booking')">Записаться</button>
+        </div>
+        <div class="spec-card" data-cat="therapist">
+          <h3>👩‍⚕️ Ольга Морозова</h3>
+          <p>Врач общей практики</p>
+          <p>⭐ 4.8 · 112 отзывов</p>
+          <p class="price">2 200 ₽ / 30 мин</p>
+          <button onclick="showPage('booking')">Записаться</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page" id="page-booking">
+    <div class="card" style="max-width:500px; margin:0 auto">
+      <h2>📋 Запись на приём</h2>
+      <div class="form-group">
+        <label>Ваше имя *</label>
+        <input type="text" id="b-name" placeholder="Введите имя">
+        <div class="error-msg" id="err-name">Введите ваше имя</div>
+      </div>
+      <div class="form-group">
+        <label>Телефон *</label>
+        <input type="tel" id="b-phone" placeholder="+7 707 000 00 00">
+        <div class="error-msg" id="err-phone">Введите номер телефона</div>
+      </div>
+      <div class="form-group">
+        <label>Выберите специалиста *</label>
+        <select id="b-spec">
+          <option value="">-- выберите --</option>
+          <option>Алина Смирнова (Терапевт)</option>
+          <option>Дмитрий Козлов (Кардиолог)</option>
+          <option>Елена Михайлова (Стоматолог)</option>
+          <option>Игорь Ветров (Невролог)</option>
+          <option>Ольга Морозова (Врач общей практики)</option>
+        </select>
+        <div class="error-msg" id="err-spec">Выберите специалиста</div>
+      </div>
+      <div class="form-group">
+        <label>Дата *</label>
+        <input type="date" id="b-date">
+        <div class="error-msg" id="err-date">Выберите дату</div>
+      </div>
+      <div class="form-group">
+        <label>Время *</label>
+        <select id="b-time">
+          <option value="">-- выберите --</option>
+          <option>09:00</option><option>10:00</option><option>11:00</option>
+          <option>13:00</option><option>14:00</option><option>15:00</option><option>16:00</option>
+        </select>
+        <div class="error-msg" id="err-time">Выберите время</div>
+      </div>
+      <button onclick="submitBooking()">Подтвердить запись</button>
+      <div class="success-box" id="booking-success">✅ Вы успешно записаны! Ждём вас в указанное время.</div>
+    </div>
+  </div>
+
+  <div class="page" id="page-login">
+    <div class="card" style="max-width:420px; margin:0 auto">
+      <h2>👤 Личный кабинет</h2>
+      <div class="tabs">
+        <button class="tab active" onclick="switchTab(this, 'tab-login')">Войти</button>
+        <button class="tab" onclick="switchTab(this, 'tab-register')">Регистрация</button>
+      </div>
+      <div class="tab-panel active" id="tab-login">
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="l-email" placeholder="example@mail.com">
+          <div class="error-msg" id="err-lemail">Введите email</div>
+        </div>
+        <div class="form-group">
+          <label>Пароль</label>
+          <input type="password" id="l-pass" placeholder="Ваш пароль">
+          <div class="error-msg" id="err-lpass">Введите пароль</div>
+        </div>
+        <button onclick="submitLogin()">Войти</button>
+        <div class="success-box" id="login-success">✅ Вход выполнен! Добро пожаловать.</div>
+      </div>
+      <div class="tab-panel" id="tab-register">
+        <div class="form-group">
+          <label>Имя *</label>
+          <input type="text" id="r-name" placeholder="Ваше имя">
+          <div class="error-msg" id="err-rname">Введите имя</div>
+        </div>
+        <div class="form-group">
+          <label>Email *</label>
+          <input type="email" id="r-email" placeholder="example@mail.com">
+          <div class="error-msg" id="err-remail">Введите корректный email</div>
+        </div>
+        <div class="form-group">
+          <label>Пароль *</label>
+          <input type="password" id="r-pass" placeholder="Минимум 6 символов">
+          <div class="error-msg" id="err-rpass">Пароль — минимум 6 символов</div>
+        </div>
+        <button onclick="submitRegister()">Зарегистрироваться</button>
+        <div class="success-box" id="register-success">🎉 Аккаунт создан! Теперь вы можете войти.</div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+  function showPage(name) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-' + name).classList.add('active');
+  }
+
+  function filterCards(btn, category) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.spec-card').forEach(card => {
+      card.style.display = (category === 'all' || card.dataset.cat === category) ? 'block' : 'none';
+    });
+  }
+
+  function switchTab(btn, tabId) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(tabId).classList.add('active');
+  }
+
+  function showError(inputId, errId) {
+    document.getElementById(inputId).classList.add('error');
+    document.getElementById(errId).classList.add('show');
+  }
+  function hideError(inputId, errId) {
+    document.getElementById(inputId).classList.remove('error');
+    document.getElementById(errId).classList.remove('show');
+  }
+
+  function submitBooking() {
+    let ok = true;
+    if (document.getElementById('b-name').value.trim().length < 2) { showError('b-name', 'err-name'); ok = false; } else { hideError('b-name', 'err-name'); }
+    if (document.getElementById('b-phone').value.trim().length < 6) { showError('b-phone', 'err-phone'); ok = false; } else { hideError('b-phone', 'err-phone'); }
+    if (document.getElementById('b-spec').value === '') { showError('b-spec', 'err-spec'); ok = false; } else { hideError('b-spec', 'err-spec'); }
+    if (document.getElementById('b-date').value === '') { showError('b-date', 'err-date'); ok = false; } else { hideError('b-date', 'err-date'); }
+    if (document.getElementById('b-time').value === '') { showError('b-time', 'err-time'); ok = false; } else { hideError('b-time', 'err-time'); }
+    if (ok) document.getElementById('booking-success').style.display = 'block';
+  }
+
+  function submitLogin() {
+    let ok = true;
+    if (document.getElementById('l-email').value.trim().indexOf('@') === -1) { showError('l-email', 'err-lemail'); ok = false; } else { hideError('l-email', 'err-lemail'); }
+    if (document.getElementById('l-pass').value.length < 1) { showError('l-pass', 'err-lpass'); ok = false; } else { hideError('l-pass', 'err-lpass'); }
+    if (ok) document.getElementById('login-success').style.display = 'block';
+  }
+
+  function submitRegister() {
+    let ok = true;
+    if (document.getElementById('r-name').value.trim().length < 2) { showError('r-name', 'err-rname'); ok = false; } else { hideError('r-name', 'err-rname'); }
+    let email = document.getElementById('r-email').value.trim();
+    if (email.indexOf('@') === -1) { showError('r-email', 'err-remail'); ok = false; } else { hideError('r-email', 'err-remail'); }
+    if (document.getElementById('r-pass').value.length < 6) { showError('r-pass', 'err-rpass'); ok = false; } else { hideError('r-pass', 'err-rpass'); }
+    if (ok) document.getElementById('register-success').style.display = 'block';
+  }
+
+  let today = new Date().toISOString().split('T')[0];
+  document.getElementById('b-date').setAttribute('min', today);
+</script>
+
+</body>
+</html>
